@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: orders-service
+  name: bookstore-service
   labels:
-    app: orders-service
+    app: bookstore-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: orders-service
-      example: orders-service
+      app: bookstore-service
+      example: bookstore-service
   template:
     metadata:
       labels:
-        app: orders-service
-        example: orders-service
+        app: bookstore-service
+        example: bookstore-service
     spec:
       containers:
-        - name: orders-service
-          image: "eu.gcr.io/kyma-project/develop/orders-service:e8175c63"
-          imagePullPolicy: IfNotPresent
+        - name: bookstore-service
+          image: kwiatekus/bookstore
+          imagePullPolicy: Always
           resources:
             limits:
               cpu: 20m
@@ -27,8 +27,4 @@ spec:
             requests:
               cpu: 10m
               memory: 16Mi
-          env:
-            - name: APP_PORT
-              value: "8080"
-            - name: APP_REDIS_PREFIX
-              value: "REDIS_"
+

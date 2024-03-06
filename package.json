@@ -1,0 +1,17 @@
+{
+    "name": "bookstore-service",
+    "version": "0.0.1",
+    "main": "src/app.js",
+    "scripts": {
+      "start": "node src/app.js",
+      "test": "mocha tests/*.js"
+    },
+    "dependencies": {
+      "express": "^4.18.3"
+    },
+    "devDependencies": {
+      "chai": "^4.4.1",
+      "chai-http": "^4.4.0",
+      "mocha": "^10.3.0"
+    }
+}
