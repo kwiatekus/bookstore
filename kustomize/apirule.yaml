@@ -10,11 +10,11 @@ spec:
     namespace: default
     port: 80
   rules:
-    - path: /v1/books
+    - path: /.*
       methods: ["GET"] 
       accessStrategies:
       - handler: noop
-    - path: /v1/books/register
+    - path: /.*
       methods: ["POST"]
       accessStrategies:
       - handler: noop

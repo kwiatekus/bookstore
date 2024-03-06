@@ -7,7 +7,11 @@ const port = 3000;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// Listen to events and send an email
+
+app.get('/v1/books', (req, res) => {
+    res.sendStatus(200);
+})
+
 app.post('/v1/books/register', (req, res) => {
   let title = getTitle(req.body);
   let author = getAuthor(req.body);
