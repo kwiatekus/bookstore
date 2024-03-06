@@ -4,23 +4,28 @@ const { v4: uuidv4 } = require('uuid');
 //const tracing = require('./tracing.js');
 const app = express();
 const port = 3000;
+const readBooksQuery = "SELECT * FROM BOOKS"
 
-const queryDB = require('./hana.js');
+const hanaLib = require('./hana.js');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+hanaLib.setupHana();
+
 
 app.get('/v1/books', async (req, res) => {
     try{
-        var books = await queryDB("SELECT * FROM BOOKS");
-        res.send(books);
+        console.log(`Running ${readBooksQuery}`)
+        var books = await hanaLib.queryDB(readBooksQuery);
+        res.json(books);
     } catch (e) {
+        console.error(`Error: ${e}`)
         res.status(500).send(e);
     }    
 })
 
-app.post('/v1/books/register', (req, res) => {
+app.post('/v1/books/register', async (req, res) => {
   let title = getTitle(req.body);
   let author = getAuthor(req.body);
 
@@ -28,16 +33,16 @@ app.post('/v1/books/register', (req, res) => {
     console.log('No author or title received!');
     res.sendStatus(400);
   } else {
-    var uid = uuidv4();
-    console.log(`Book ${title} by ${author} registered with ID:${uid}`);
-    res.sendStatus(200);
+    let query = `insert into BOOKS values ('${uuidv4()}', '${title}', '${author}')`
+    try {
+        let result =  await hanaLib.queryDB(query);
+        console.log(`Book ${title} by ${author} registered`);
+        res.send(`${result} book added`);
+    } catch (e) {
+        console.error(`Error: ${e}`)
+        res.status(500).send(e);
+    }
   }
-
-  /*
-        TODO:
-         - propagate tracing headers to email service: tracing.propagateTracingHeaders(req.headers, req)
-         - send email to event.customer.uid
-    */
 });
 
 var server = app.listen(port, () =>
@@ -50,6 +55,7 @@ app.stop = function() {
 
 module.exports = app;
 
+//TODO: refactor
 function getTitle(body) {
   if (body.title === undefined ) {
     return undefined;

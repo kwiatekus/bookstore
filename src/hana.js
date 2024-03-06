@@ -1,19 +1,25 @@
 const xsenv = require('@sap/xsenv');
 const hana = require('@sap/hana-client');
+var services = undefined;
+var hanaConn = undefined;
 
-var services = xsenv.getServices({
-    hana: { name: 'hana' },
-    hanaUrl: { name: 'hana-url' },
-  });
- 
-services.hana.schema = process.env.HANA_SCHEMA;
-services.hana.host = services.hanaUrl.host;
-services.hana.port = services.hanaUrl.port;
+module.exports.setupHana = function(){
+    services = xsenv.getServices({
+        hana: { name: 'hana' },
+        hanaUrl: { name: 'hana-url' },
+      });
+     
+    services.hana.schema = process.env.HANA_SCHEMA;
+    services.hana.host = services.hanaUrl.host;
+    services.hana.port = services.hanaUrl.port;
+    
+    console.log("Creating connection to SAP hana db...")
+    console.log(`host: ${services.hana.host}, port: ${services.hana.port}`)
+    hanaConn = hana.createConnection();
+}
 
-console.log("Creating connection to SAP hana db...")
-const hanaConn = hana.createConnection();
 
-async function queryDB(sql) {
+module.exports.queryDB = async function(sql) {
     try {
       await hanaConn.connect(services.hana);
     } catch (err) {
@@ -37,8 +43,4 @@ async function queryDB(sql) {
       results = err.message;
     }
     return results;
-  }
-
-  module.exports = {
-    queryDB
-  }
+}
