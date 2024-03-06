@@ -5,12 +5,19 @@ const { v4: uuidv4 } = require('uuid');
 const app = express();
 const port = 3000;
 
+const queryDB = require('./hana.js');
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
-app.get('/v1/books', (req, res) => {
-    res.sendStatus(200);
+app.get('/v1/books', async (req, res) => {
+    try{
+        var books = await queryDB("SELECT * FROM BOOKS");
+        res.send(books);
+    } catch (e) {
+        res.status(500).send(e);
+    }    
 })
 
 app.post('/v1/books/register', (req, res) => {
