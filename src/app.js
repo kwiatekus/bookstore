@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const { v4: uuidv4 } = require('uuid');
 //const tracing = require('./tracing.js');
 const app = express();
 const port = 3000;
@@ -20,7 +21,7 @@ app.post('/v1/books/register', (req, res) => {
     console.log('No author or title received!');
     res.sendStatus(400);
   } else {
-    var uid = 1
+    var uid = uuidv4();
     console.log(`Book ${title} by ${author} registered with ID:${uid}`);
     res.sendStatus(200);
   }
